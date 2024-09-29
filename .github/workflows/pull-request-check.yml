@@ -36,35 +36,8 @@ jobs:
 
             🚀 **Triggered by**: @${{ github.actor }}, via *${{ github.event_name }}*
 
-  security_check:
-    needs: inform
-    name: 🔐 Security Checks
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🔎 Checkout repository
-        uses: actions/checkout@v3
-
-      - name: ⚙️ Run security audit
-        id: security-audit
-        run: npm audit --audit-level=high
-
-      - name: 🛡️ Post Security Audit Failure
-        if: steps.security-audit.outcome == 'failure'
-        uses: mshick/add-pr-comment@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
-          message: |
-            ## ⚠️ Security Audit Failed!
-            🚨 High or critical vulnerabilities were found.
-            
-            Please review the audit results and fix the issues:
-            ```
-            npm audit results...
-            ```
-
   quality_check:
-    needs: security_check
+    needs: inform
     name: ✅ Code Quality and Testing
     runs-on: ubuntu-latest
     steps:

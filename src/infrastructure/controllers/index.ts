@@ -1,2 +1,2 @@
 export * from './Controller'
-export * from './SignInController'
+export * from './LoadDoctorController'

@@ -1,8 +1,12 @@
 import { prismaClient } from '@/infrastructure'
-import { type Doctor } from '@/domain'
+import { type DoctorData, type Doctor } from '@/domain'
 
 export interface ICreateDoctorRepository {
   create: (value: Doctor) => Promise<void>
+}
+
+export interface ILoadDoctorRepository {
+  load: (query: any) => Promise<DoctorData[]>
 }
 
 export class DoctorRepository implements ICreateDoctorRepository {
@@ -13,6 +17,18 @@ export class DoctorRepository implements ICreateDoctorRepository {
         email: doctor.Email,
         crm: doctor.CRM,
         cpf: doctor.CPF
+      }
+    })
+  }
+
+  async load (filter: any): Promise<DoctorData[]> {
+    return await prismaClient.doctor.findMany({
+      where: filter,
+      select: {
+        email: true,
+        name: true,
+        cpf: true,
+        crm: true
       }
     })
   }

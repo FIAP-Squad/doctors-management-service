@@ -1,2 +1,2 @@
 export * from './CreateDoctor'
-export * from './SignIn'
+export * from './LoadDoctor'
