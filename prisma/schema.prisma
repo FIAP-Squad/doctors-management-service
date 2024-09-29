@@ -57,3 +57,10 @@ model appointment {
   @@index([timeSlotId])
 }
 
+model identityProperties {
+  id                  String @id @default(uuid())
+  businessPartnerType String @unique
+  clientId            String @unique
+  userPoolId          String @unique
+  queue               String @unique
+}
