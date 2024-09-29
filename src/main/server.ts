@@ -13,7 +13,7 @@ async function startServer (): Promise<void> {
     const app = setupApp()
     await brokerSetup(brokerClient)
     await brokerClient.run()
-    app.listen(env.PORT, () => process.stdout.write(`Server running at ${env.PORT}\n`))
+    app.listen(env.PORT, () => process.stdout.write(`Doctors Management Service running at ${env.PORT}\n`))
   } catch (error) {
     console.error('Error starting the server:', error)
     process.exit(1)

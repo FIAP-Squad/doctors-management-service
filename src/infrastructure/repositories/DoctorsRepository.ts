@@ -1,5 +1,5 @@
 import { prismaClient } from '@/infrastructure'
-import { type DoctorData, type Doctor } from '@/domain'
+import { type Doctor, type DoctorData, type DoctorAvailability } from '@/domain'
 
 export interface ICreateDoctorRepository {
   create: (value: Doctor) => Promise<void>
@@ -13,8 +13,31 @@ export interface ICreateAvailabilityRepository {
   createAvailability: ({ email, date, startTime, endTime }) => Promise<void>
 }
 
-export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository {
-  async createAvailability ({ email, date, startTime, endTime }): Promise<void> {
+export interface ILoadAvailabilitiesRepository {
+  findAvailabilitiesByDoctorId: (doctorId: number) => Promise<DoctorAvailability[]>
+}
+
+export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository, ILoadAvailabilitiesRepository {
+  async findAvailabilitiesByDoctorId (doctorId: number): Promise<DoctorAvailability[]> {
+    return await prismaClient.availability.findMany({
+      where: { doctorId },
+      select: {
+        id: true,
+        date: true,
+        timeSlot: {
+          where: { status: 'available' },
+          select: {
+            id: true,
+            status: true,
+            startTime: true,
+            endTime: true
+          }
+        }
+      }
+    })
+  }
+
+  async createAvailability ({ email, date, startTime, endTime, status }): Promise<void> {
     await prismaClient.$transaction(async prisma => {
       const doctor = await prisma.doctor.findUnique({
         where: { email }
@@ -24,8 +47,9 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
         data: {
           date,
           doctorId: doctor.id,
-          TimeSlot: {
+          timeSlot: {
             create: {
+              status,
               startTime,
               endTime
             }
@@ -50,6 +74,7 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
     return await prismaClient.doctor.findMany({
       where: filter,
       select: {
+        id: true,
         email: true,
         name: true,
         cpf: true,
