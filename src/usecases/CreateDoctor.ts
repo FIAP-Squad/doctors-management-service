@@ -20,7 +20,7 @@ export class CreateDoctor implements ICreateDoctor {
     await this._repository.create(doctor)
     await this._emitter.publish({
       queue: this.queue,
-      message: { ...doctor }
+      message: { email, name, crm, cpf }
     })
   }
 }
