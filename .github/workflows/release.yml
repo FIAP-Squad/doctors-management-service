@@ -27,13 +27,13 @@ jobs:
       - name: 🔍 Get PR Author Info
         id: get_pr_author
         run: |
-          echo "::set-output name=username::$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH})"
-          echo "::set-output name=useremail::$(curl -s https://api.github.com/users/$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH}) | jq -r '.email')"
+          echo "username=$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH})" >> $GITHUB_ENV
+          echo "useremail=$(curl -s https://api.github.com/users/$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH}) | jq -r '.email')" >> $GITHUB_ENV
 
       - name: ⚙️ Configure Git with PR author details
         run: |
-          git config --local user.name "${{ steps.get_pr_author.outputs.username }}"
-          git config --local user.email "${{ steps.get_pr_author.outputs.useremail }}"
+          git config --local user.name "${{ env.username }}"
+          git config --local user.email "${{ env.useremail }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,9 +43,15 @@ jobs:
       - name: 🏷️ Get Tag
         id: get_tag
         run: |
-          TAG_NAME=$(git describe --tags --exact-match || echo "No tag found")
+          TAG_NAME=$(git describe --tags --exact-match 2>/dev/null || echo "No tag found")
+          if [ "$TAG_NAME" = "No tag found" ]; then
+            echo "No tag found, generating a new one..."
+            TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+            git tag $TAG_NAME
+            git push origin $TAG_NAME
+          fi
           echo "Tag Name: $TAG_NAME"
-          echo "::set-output name=tag_name::$TAG_NAME"
+          echo "tag_name=$TAG_NAME" >> $GITHUB_ENV
 
       - name: 📄 Generate Release Notes
         id: generate_notes
@@ -56,7 +62,7 @@ jobs:
       - name: 📦 Zip the dist folder
         run: |
           cd dist
-          zip -r ../${{ steps.get_tag.outputs.tag_name }}.zip .
+          zip -r ../${{ env.tag_name }}.zip .
         working-directory: .
 
       - name: 📢 Create GitHub Release
@@ -65,8 +71,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_tag.outputs.tag_name }}
-          release_name: "Release ${{ steps.get_tag.outputs.tag_name }}"
+          tag_name: ${{ env.tag_name }}
+          release_name: "Release ${{ env.tag_name }}"
           body_path: ./release_notes.md
           draft: false
           prerelease: false
@@ -75,8 +81,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ steps.get_tag.outputs.tag_name }}.zip
-          asset_name: ${{ steps.get_tag.outputs.tag_name }}.zip
+          asset_path: ./${{ env.tag_name }}.zip
+          asset_name: ${{ env.tag_name }}.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
