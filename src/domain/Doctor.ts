@@ -4,6 +4,7 @@ export type DoctorAvailability = {
   id: number
   date: Date
   timeSlot: Array<{
+    status: string
     id: number
     startTime: Date
     endTime: Date

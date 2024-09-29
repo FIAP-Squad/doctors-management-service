@@ -3,7 +3,7 @@ import { makeLoadAvailabilitiesValidation } from '@/main/factories/validations'
 import { LogControllerDecorator } from '@/main/decorators'
 import { LoadAvailabilities } from '@/usecases'
 
-export const makeCreateAvailabilityController = (): Controller => {
+export const makeLoadAvailabilitiesController = (): Controller => {
   const DAO = new LogErrorDAO()
   const repository = new DoctorRepository()
   const validation = makeLoadAvailabilitiesValidation()

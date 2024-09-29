@@ -32,6 +32,7 @@ model availability {
 
 model timeSlot {
   id             Int           @id @default(autoincrement())
+  status         String        @default("available")
   startTime      DateTime
   endTime        DateTime
   availabilityId Int
@@ -42,34 +43,18 @@ model timeSlot {
 }
 
 model appointment {
-  id         Int               @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   doctorId   Int
   patientId  Int
   timeSlotId Int
-  createdAt  DateTime          @default(now())
-  status     appointmentStatus @default(SCHEDULED)
-  doctor     doctor            @relation(fields: [doctorId], references: [id])
-  timeSlot   timeSlot          @relation(fields: [timeSlotId], references: [id])
+  createdAt  DateTime @default(now())
+  status     String
+  doctor     doctor   @relation(fields: [doctorId], references: [id])
+  timeSlot   timeSlot @relation(fields: [timeSlotId], references: [id])
 
   @@index([doctorId])
   @@index([patientId])
   @@index([timeSlotId])
-}
-
-enum appointmentStatus {
-  SCHEDULED
-  CANCELLED
-  COMPLETED
-}
-
-enum dayOfWeek {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
 }
 
 model identityProperties {

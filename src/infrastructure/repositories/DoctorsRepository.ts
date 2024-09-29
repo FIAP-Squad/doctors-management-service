@@ -25,8 +25,10 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
         id: true,
         date: true,
         timeSlot: {
+          where: { status: 'available' },
           select: {
             id: true,
+            status: true,
             startTime: true,
             endTime: true
           }
@@ -35,7 +37,7 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
     })
   }
 
-  async createAvailability ({ email, date, startTime, endTime }): Promise<void> {
+  async createAvailability ({ email, date, startTime, endTime, status }): Promise<void> {
     await prismaClient.$transaction(async prisma => {
       const doctor = await prisma.doctor.findUnique({
         where: { email }
@@ -47,6 +49,7 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
           doctorId: doctor.id,
           timeSlot: {
             create: {
+              status,
               startTime,
               endTime
             }

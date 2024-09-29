@@ -8,12 +8,14 @@ const mockDoctorAvailability = (): DoctorAvailability[] => ([
     date: new Date('2024-09-30T10:00:00Z'),
     timeSlot: [
       {
+        status: 'busy',
         id: 1,
         startTime: new Date('2024-09-30T10:00:00Z'),
         endTime: new Date('2024-09-30T10:30:00Z')
       },
       {
         id: 2,
+        status: 'available',
         startTime: new Date('2024-09-30T10:30:00Z'),
         endTime: new Date('2024-09-30T11:00:00Z')
       }
