@@ -9,7 +9,32 @@ export interface ILoadDoctorRepository {
   load: (query: any) => Promise<DoctorData[]>
 }
 
-export class DoctorRepository implements ICreateDoctorRepository {
+export interface ICreateAvailabilityRepository {
+  createAvailability: ({ email, date, startTime, endTime }) => Promise<void>
+}
+
+export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository {
+  async createAvailability ({ email, date, startTime, endTime }): Promise<void> {
+    await prismaClient.$transaction(async prisma => {
+      const doctor = await prisma.doctor.findUnique({
+        where: { email }
+      })
+
+      await prisma.availability.create({
+        data: {
+          date,
+          doctorId: doctor.id,
+          TimeSlot: {
+            create: {
+              startTime,
+              endTime
+            }
+          }
+        }
+      })
+    })
+  }
+
   async create (doctor: Doctor): Promise<void> {
     await prismaClient.doctor.create({
       data: {
