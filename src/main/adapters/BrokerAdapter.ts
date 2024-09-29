@@ -43,7 +43,9 @@ export class BrokerClient implements IBrokerAdapter {
 
   async publish ({ queue, message }): Promise<void> {
     await this.channel.assertQueue(queue, { durable: true })
+    const messageContent = message.content.toString()
     this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)))
+    console.log(`Message sended through queue: ${queue}: ${messageContent}`)
   }
 
   async run (): Promise<void> {

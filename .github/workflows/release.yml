@@ -37,9 +37,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📝 Generate Changelog
-        run: npm run changelog:generate
-
       - name: 🏗️ Build project
         run: npm run build
 

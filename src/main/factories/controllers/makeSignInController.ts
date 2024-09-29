@@ -1,14 +1,11 @@
-import { EventMapDAO, IdentityGateway, type Controller, LogErrorDAO, SignInController } from '@/infrastructure'
+import { type Controller, LoadDoctorController, LogErrorDAO, DoctorRepository } from '@/infrastructure'
 import { LogControllerDecorator } from '@/main/decorators'
-import { makeSignInValidation } from '@/main/factories/validations'
-import { SignIn } from '@/usecases'
+import { LoadDoctor } from '@/usecases'
 
-export const makeSignInController = (): Controller => {
-  const DAO = new EventMapDAO()
-  const logger = new LogErrorDAO()
-  const gateway = new IdentityGateway()
-  const validation = makeSignInValidation()
-  const usecase = new SignIn(DAO, gateway)
-  const controller = new SignInController(validation, usecase)
-  return new LogControllerDecorator(controller, logger)
+export const makeLoadDoctorController = (): Controller => {
+  const DAO = new LogErrorDAO()
+  const repository = new DoctorRepository()
+  const usecase = new LoadDoctor(repository)
+  const controller = new LoadDoctorController(usecase)
+  return new LogControllerDecorator(controller, DAO)
 }
