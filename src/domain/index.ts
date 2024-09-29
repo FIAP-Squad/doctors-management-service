@@ -1,0 +1,5 @@
+export * from './Doctor'
+export * from './Email'
+export * from './Name'
+export * from './CPF'
+export * from './CRM'

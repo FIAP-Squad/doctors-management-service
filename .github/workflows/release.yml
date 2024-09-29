@@ -1,0 +1,85 @@
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+name: 🚀 Create Release Pipeline
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true  # Somente se o PR foi mergeado
+    name: 🛠️ Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v2
+
+      - name: ⚙️ Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🔍 Get PR Author Info
+        id: get_pr_author
+        run: |
+          echo "::set-output name=username::$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH})"
+          echo "::set-output name=useremail::$(curl -s https://api.github.com/users/$(jq -r '.pull_request.user.login' < ${GITHUB_EVENT_PATH}) | jq -r '.email')"
+
+      - name: ⚙️ Configure Git with PR author details
+        run: |
+          git config --local user.name "${{ steps.get_pr_author.outputs.username }}"
+          git config --local user.email "${{ steps.get_pr_author.outputs.useremail }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📝 Generate Changelog
+        run: npm run changelog:generate
+
+      - name: 🏗️ Build project
+        run: npm run build
+
+      - name: 🏷️ Get Tag
+        id: get_tag
+        run: |
+          TAG_NAME=$(git describe --tags --exact-match || echo "No tag found")
+          echo "Tag Name: $TAG_NAME"
+          echo "::set-output name=tag_name::$TAG_NAME"
+
+      - name: 📄 Generate Release Notes
+        id: generate_notes
+        run: |
+          echo "## Changes in this Release" > release_notes.md
+          git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 @^)..@ >> release_notes.md
+
+      - name: 📦 Zip the dist folder
+        run: |
+          cd dist
+          zip -r ../${{ steps.get_tag.outputs.tag_name }}.zip .
+        working-directory: .
+
+      - name: 📢 Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag_name }}
+          release_name: "Release ${{ steps.get_tag.outputs.tag_name }}"
+          body_path: ./release_notes.md
+          draft: false
+          prerelease: false
+
+      - name: 📤 Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.get_tag.outputs.tag_name }}.zip
+          asset_name: ${{ steps.get_tag.outputs.tag_name }}.zip
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

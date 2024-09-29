@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+      "lib": ["ESNext"],
+      "strictNullChecks": false,
+      "outDir": "dist",
+      "module": "commonJS",
+      "target": "es2019",
+      "esModuleInterop": true,
+      "rootDirs": [
+        "src",
+        "tests"
+      ],
+      "baseUrl": "src",
+      "paths": {
+        "@/tests/*": [
+          "../tests/*"
+        ],
+        "@/*": [
+          "*"
+        ]
+      }
+    },
+    "include": [
+      "src",
+      "tests"
+    ]
+  }
