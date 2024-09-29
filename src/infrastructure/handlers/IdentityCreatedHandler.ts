@@ -1,7 +1,7 @@
 import { type ICreateDoctor } from '@/usecases'
 import { type Handler } from '@/infrastructure'
 
-export class IdentityRequestedCreated implements Handler {
+export class IdentityCreatedHandler implements Handler {
   constructor (private readonly _usecase: ICreateDoctor) { }
   async handle (event: any): Promise<void> {
     try {

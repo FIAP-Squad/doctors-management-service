@@ -1,4 +1,4 @@
-import { IdentityRequestedCreated } from '@/infrastructure'
+import { IdentityCreatedHandler } from '@/infrastructure'
 import { type ICreateDoctor } from '@/usecases'
 
 const mockEvent = (): any => (JSON.stringify({
@@ -21,20 +21,20 @@ const mockCreateDoctor = (): ICreateDoctor => {
 }
 
 interface SutTypes {
-  sut: IdentityRequestedCreated
+  sut: IdentityCreatedHandler
   CreateDoctorStub: ICreateDoctor
 }
 
 const makeSut = (): SutTypes => {
   const CreateDoctorStub = mockCreateDoctor()
-  const sut = new IdentityRequestedCreated(CreateDoctorStub)
+  const sut = new IdentityCreatedHandler(CreateDoctorStub)
   return {
     sut,
     CreateDoctorStub
   }
 }
 
-describe('IdentityRequestedCreated', () => {
+describe('IdentityCreatedHandler', () => {
   test('Should call ICreateDoctor with correct values', async () => {
     const { sut, CreateDoctorStub } = makeSut()
     const event = mockEvent()
