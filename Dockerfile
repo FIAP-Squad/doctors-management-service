@@ -1,8 +1,8 @@
 FROM node:18
-WORKDIR /usr/src/auth-service
-COPY auth-service/package*.json ./
+WORKDIR /usr/src/doctors-management-service
+COPY doctors-management-service/package*.json ./
 RUN npm i
-COPY auth-service/ .
+COPY doctors-management-service/ .
 RUN npm run build
 RUN npx prisma generate
 ENV MYSQL_URL=mysql://root:root@db:3306/db
