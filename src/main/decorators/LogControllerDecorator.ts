@@ -1,13 +1,13 @@
 import {
-  type IController,
+  type Controller,
   type IHTTPRequest,
   type IHTTPResponse,
   type ILogErrorDAO
 } from '@/infrastructure'
 
-export class LogControllerDecorator implements IController {
+export class LogControllerDecorator implements Controller {
   constructor (
-    private readonly _controller: IController,
+    private readonly _controller: Controller,
     private readonly _DAO: ILogErrorDAO
   ) { }
 

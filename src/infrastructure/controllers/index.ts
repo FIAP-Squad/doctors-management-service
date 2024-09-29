@@ -1,2 +1,2 @@
-export * from './IController'
+export * from './Controller'
 export * from './SignInController'

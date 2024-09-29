@@ -13,13 +13,13 @@ datasource db {
 }
 
 model Doctor {
-  id         Int           @id @default(autoincrement())
-  name       String
-  email      String        @unique
-  crm        String        @unique
-  specialty  String?
+  id           Int            @id @default(autoincrement())
+  name         String
+  email        String         @unique
+  crm          String         @unique
+  cpf          String         @unique
   Availability Availability[]
-  Appointment Appointment[]
+  Appointment  Appointment[]
 }
 
 // model Patient {
@@ -41,11 +41,11 @@ model Availability {
 }
 
 model TimeSlot {
-  id             Int        @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   startTime      DateTime
   endTime        DateTime
   availabilityId Int
-  availability   Availability @relation(fields: [availabilityId], references: [id])
+  availability   Availability  @relation(fields: [availabilityId], references: [id])
   Appointment    Appointment[]
 
   @@index([availabilityId])
@@ -83,9 +83,9 @@ enum DayOfWeek {
 }
 
 model IdentityProperties {
-    id                  String @id @default(uuid())
-    businessPartnerType String @unique
-    clientId            String @unique
-    userPoolId          String @unique
-    queue               String @unique
+  id                  String @id @default(uuid())
+  businessPartnerType String @unique
+  clientId            String @unique
+  userPoolId          String @unique
+  queue               String @unique
 }

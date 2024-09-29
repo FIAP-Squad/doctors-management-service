@@ -1,11 +1,11 @@
 import amqp, { type Channel, type Connection } from 'amqplib'
 import env from '@/main/config/env'
-import { type IHandler } from '@/infrastructure'
+import { type Handler } from '@/infrastructure'
 
 export interface IBrokerAdapter {
   connect: () => Promise<void>
   disconnect: () => Promise<void>
-  subscribe: (queue: string, handle: IHandler) => Promise<void>
+  subscribe: (queue: string, handle: Handler) => Promise<void>
   publish: ({ queue, message }) => Promise<void>
   run: () => Promise<void>
 }
@@ -18,7 +18,7 @@ export class BrokerClient implements IBrokerAdapter {
   private readonly _PORT: number = Number.parseInt(env.RABBITMQ.PORT)
   private readonly _USERNAME: string = env.RABBITMQ.USERNAME
   private readonly _PASSWORD: string = env.RABBITMQ.PASSWORD
-  private readonly handlers: Map<string, IHandler> = new Map<string, IHandler>()
+  private readonly handlers: Map<string, Handler> = new Map<string, Handler>()
 
   async connect (): Promise<void> {
     this.connection = await amqp.connect({
@@ -36,7 +36,7 @@ export class BrokerClient implements IBrokerAdapter {
     await this.connection.close()
   }
 
-  async subscribe (queue: string, handler: IHandler): Promise<void> {
+  async subscribe (queue: string, handler: Handler): Promise<void> {
     await this.channel.assertQueue(queue, { durable: true })
     this.handlers.set(queue, handler)
   }

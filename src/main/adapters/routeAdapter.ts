@@ -1,8 +1,8 @@
-import { type IController, type IHTTPRequest } from '@/infrastructure'
+import { type Controller, type IHTTPRequest } from '@/infrastructure'
 import { type Request, type Response } from 'express'
 import clc from 'cli-color'
 
-export const adaptRoute = (controller: IController) => {
+export const adaptRoute = (controller: Controller) => {
   return async (req: Request, res: Response) => {
     const request: IHTTPRequest = {
       body: req.body,
