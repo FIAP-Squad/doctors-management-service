@@ -1,0 +1,143 @@
+name: 🛡️ (Code Health Check - QA)
+
+on:
+  pull_request_target:
+    types:
+      - reopened
+      - synchronize
+  pull_request:
+    types:
+      - opened
+    branches:
+      - 'qa'
+
+permissions:
+  pull-requests: write
+  contents: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+
+jobs:
+  inform:
+    name: 🚀 Initializing Code Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📢 Start PR Validation
+        uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ## 🚦 Pull Request Validation Initialized
+            🔍 Validating committed files.
+            
+            🛠️ **Jobs Running** - *Please wait for the results below...*
+
+            🚀 **Triggered by**: @${{ github.actor }}, via *${{ github.event_name }}*
+
+  security_check:
+    needs: inform
+    name: 🔐 Security Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔎 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Run security audit
+        id: security-audit
+        run: npm audit --audit-level=high
+
+      - name: 🛡️ Post Security Audit Failure
+        if: steps.security-audit.outcome == 'failure'
+        uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ## ⚠️ Security Audit Failed!
+            🚨 High or critical vulnerabilities were found.
+            
+            Please review the audit results and fix the issues:
+            ```
+            npm audit results...
+            ```
+
+  quality_check:
+    needs: security_check
+    name: ✅ Code Quality and Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛠️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run Automated Tests
+        id: automated-tests
+        run: npm test
+
+      - name: 🛠️ SonarCloud Quality Gate
+        id: sonar-quality-gate
+        uses: SonarSource/sonarcloud-github-action@v2.1.0
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:          
+          args: >
+            -Dsonar.projectKey=${{ vars.PROJECT_KEY }}
+            -Dsonar.organization=${{ vars.ORGANIZATION }}
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.exclusions=node_modules/**,src/main/**,src/core/**,src/domain/**,src/adapters/**,**\*.spec.ts,**\*.test.ts,
+            -Dsonar.typescript.tsconfigPath=tsconfig.json
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.verbose=true
+
+      - name: 🔎 Fetch SonarQube Results
+        id: sonar-results
+        run: |
+          curl -u ${{ secrets.SONAR_TOKEN }} "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ vars.PROJECT_KEY }}" > sonar-report.json
+          cat sonar-report.json # Exibe o relatório para validação
+        continue-on-error: true
+
+      - name: 📊 Parse SonarQube Results
+        id: parse-sonar-results
+        run: |
+          QUALITY_STATUS=$(cat sonar-report.json | jq -r '.projectStatus.status')
+          RELIABILITY=$(cat sonar-report.json | jq -r '.projectStatus.conditions[] | select(.metricKey=="new_reliability_rating").actualValue')
+          SECURITY=$(cat sonar-report.json | jq -r '.projectStatus.conditions[] | select(.metricKey=="new_security_rating").actualValue')
+          MAINTAINABILITY=$(cat sonar-report.json | jq -r '.projectStatus.conditions[] | select(.metricKey=="new_maintainability_rating").actualValue')
+          SECURITY_HOTSPOTS=$(cat sonar-report.json | jq -r '.projectStatus.conditions[] | select(.metricKey=="new_security_hotspots_reviewed").actualValue')
+
+          echo "QUALITY_STATUS=$QUALITY_STATUS" >> $GITHUB_ENV
+          echo "RELIABILITY=$RELIABILITY" >> $GITHUB_ENV
+          echo "SECURITY=$SECURITY" >> $GITHUB_ENV
+          echo "MAINTAINABILITY=$MAINTAINABILITY" >> $GITHUB_ENV
+          echo "SECURITY_HOTSPOTS=$SECURITY_HOTSPOTS" >> $GITHUB_ENV
+
+      - name: 📋 Post Test and Quality Results
+        uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ## 🔍 Code Quality and Test Results:
+            
+            ### ✅ Automated Tests: `${{ steps.automated-tests.outcome }}`.
+            ### ✅ SonarQube Quality Gate: `${{ env.QUALITY_STATUS }}`.
+ 
+            ### SonarQube Report:
+
+            - 🐞 **Reliability Rating**: `${{ env.RELIABILITY }}`
+            - 🔐 **Security Rating**: `${{ env.SECURITY }}`
+            - ⚙️ **Maintainability Rating**: `${{ env.MAINTAINABILITY }}`
+            - 🔎 **Security Hotspots Reviewed**: `${{ env.SECURITY_HOTSPOTS }}%`
+
+            ### Quality Gate Status:
+
+            **SonarQube Quality Gate Status**: `${{ env.QUALITY_STATUS }}`
+
+            🚀 Pushed by: @${{ github.actor }}, Action: *${{ github.event_name }}*

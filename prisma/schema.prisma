@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("MYSQL_URL")
+}
+
+model Doctor {
+  id         Int           @id @default(autoincrement())
+  name       String
+  email      String        @unique
+  crm        String        @unique
+  specialty  String?
+  Availability Availability[]
+  Appointment Appointment[]
+}
+
+// model Patient {
+//   id         Int           @id @default(autoincrement())
+//   name       String
+//   email      String        @unique
+//   cpf        String        @unique
+//   Appointment Appointment[]
+// }
+
+model Availability {
+  id        Int        @id @default(autoincrement())
+  dayOfWeek DayOfWeek
+  doctorId  Int
+  doctor    Doctor     @relation(fields: [doctorId], references: [id])
+  TimeSlot  TimeSlot[]
+
+  @@index([doctorId])
+}
+
+model TimeSlot {
+  id             Int        @id @default(autoincrement())
+  startTime      DateTime
+  endTime        DateTime
+  availabilityId Int
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+  Appointment    Appointment[]
+
+  @@index([availabilityId])
+}
+
+model Appointment {
+  id         Int               @id @default(autoincrement())
+  doctorId   Int
+  patientId  Int
+  timeSlotId Int
+  createdAt  DateTime          @default(now())
+  status     AppointmentStatus @default(SCHEDULED)
+  doctor     Doctor            @relation(fields: [doctorId], references: [id])
+  timeSlot   TimeSlot          @relation(fields: [timeSlotId], references: [id])
+
+  @@index([doctorId])
+  @@index([patientId])
+  @@index([timeSlotId])
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model IdentityProperties {
+    id                  String @id @default(uuid())
+    businessPartnerType String @unique
+    clientId            String @unique
+    userPoolId          String @unique
+    queue               String @unique
+}
