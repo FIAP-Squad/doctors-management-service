@@ -64,7 +64,7 @@ jobs:
             -Dsonar.tests=tests
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.exclusions=node_modules/**,src/main/**,src/core/**,src/domain/**,src/adapters/**,**\*.spec.ts,**\*.test.ts,
+            -Dsonar.exclusions=node_modules/**,src/main/**,**\*.spec.ts,**\*.test.ts,
             -Dsonar.typescript.tsconfigPath=tsconfig.json
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.verbose=true
