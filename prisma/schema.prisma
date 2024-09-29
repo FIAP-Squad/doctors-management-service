@@ -10,59 +10,59 @@ datasource db {
   url      = env("MYSQL_URL")
 }
 
-model Doctor {
+model doctor {
   id           Int            @id @default(autoincrement())
   name         String
   email        String         @unique
   crm          String         @unique
   cpf          String         @unique
-  Availability Availability[]
-  Appointment  Appointment[]
+  availability availability[]
+  appointment  appointment[]
 }
 
-model Availability {
+model availability {
   id       Int        @id @default(autoincrement())
   date     DateTime
   doctorId Int
-  doctor   Doctor     @relation(fields: [doctorId], references: [id])
-  TimeSlot TimeSlot[]
+  doctor   doctor     @relation(fields: [doctorId], references: [id])
+  timeSlot timeSlot[]
 
   @@index([doctorId])
 }
 
-model TimeSlot {
+model timeSlot {
   id             Int           @id @default(autoincrement())
   startTime      DateTime
   endTime        DateTime
   availabilityId Int
-  availability   Availability  @relation(fields: [availabilityId], references: [id])
-  Appointment    Appointment[]
+  availability   availability  @relation(fields: [availabilityId], references: [id])
+  appointment    appointment[]
 
   @@index([availabilityId])
 }
 
-model Appointment {
+model appointment {
   id         Int               @id @default(autoincrement())
   doctorId   Int
   patientId  Int
   timeSlotId Int
   createdAt  DateTime          @default(now())
-  status     AppointmentStatus @default(SCHEDULED)
-  doctor     Doctor            @relation(fields: [doctorId], references: [id])
-  timeSlot   TimeSlot          @relation(fields: [timeSlotId], references: [id])
+  status     appointmentStatus @default(SCHEDULED)
+  doctor     doctor            @relation(fields: [doctorId], references: [id])
+  timeSlot   timeSlot          @relation(fields: [timeSlotId], references: [id])
 
   @@index([doctorId])
   @@index([patientId])
   @@index([timeSlotId])
 }
 
-enum AppointmentStatus {
+enum appointmentStatus {
   SCHEDULED
   CANCELLED
   COMPLETED
 }
 
-enum DayOfWeek {
+enum dayOfWeek {
   MONDAY
   TUESDAY
   WEDNESDAY
@@ -72,7 +72,7 @@ enum DayOfWeek {
   SUNDAY
 }
 
-model IdentityProperties {
+model identityProperties {
   id                  String @id @default(uuid())
   businessPartnerType String @unique
   clientId            String @unique
