@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/FIAP-Squad/doctors-management-service/compare/v1.0.2...v1.1.0) (2024-09-29)
+
+
+### Features
+
+* create availability ([e5c3d14](https://github.com/FIAP-Squad/doctors-management-service/commit/e5c3d14270c116c4834b53c0f0ec7efbc01dc4ff))
+
+
+### Bug Fixes
+
+* update listener ([267051a](https://github.com/FIAP-Squad/doctors-management-service/commit/267051a27b3d15226d6296f01889b52cee57da36))
+
 ## 1.1.0 (2024-09-29)
 
 

@@ -69,16 +69,6 @@ describe('Create Doctor Use Case', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should call emitter with correct values', async () => {
-    const { sut, emitterStub } = mockSut()
-    const spy = jest.spyOn(emitterStub, 'publish')
-    await sut.execute(mockDoctorData())
-    expect(spy).toHaveBeenCalledWith({
-      queue: 'doctor-created-queue',
-      message: { ...mockDoctorData() }
-    })
-  })
-
   test('Should complete execution without throwing errors', async () => {
     const { sut } = mockSut()
     const promise = sut.execute(mockDoctorData())

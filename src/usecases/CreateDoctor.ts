@@ -9,7 +9,7 @@ export interface ICreateDoctor {
 }
 
 export class CreateDoctor implements ICreateDoctor {
-  public readonly queue: string = 'doctor-created-queue'
+  public readonly queue: string = 'doctor-created'
   constructor (
     private readonly _repository: ICreateDoctorRepository,
     private readonly _emitter: IEmitterGateway

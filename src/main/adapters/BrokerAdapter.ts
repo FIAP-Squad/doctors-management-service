@@ -43,8 +43,8 @@ export class BrokerClient implements IBrokerAdapter {
 
   async publish ({ queue, message }): Promise<void> {
     await this.channel.assertQueue(queue, { durable: true })
-    const messageContent = message.content.toString()
-    this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)))
+    const messageContent = JSON.stringify(message)
+    this.channel.sendToQueue(queue, Buffer.from(messageContent))
     console.log(`Message sended through queue: ${queue}: ${messageContent}`)
   }
 
@@ -54,7 +54,8 @@ export class BrokerClient implements IBrokerAdapter {
         if (message) {
           const messageContent = message.content.toString()
           console.log(`Message received through queue: ${queue}: ${messageContent}`)
-          await handler.handle(messageContent)
+          const parsedMessage = JSON.parse(messageContent)
+          await handler.handle(parsedMessage)
           this.channel.ack(message)
         }
       })

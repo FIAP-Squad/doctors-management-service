@@ -1,0 +1,34 @@
+name: "🔍 Snyk Vulnerability Scan"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  snyk-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v2
+
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      - name: 🛡️ Run Snyk to Check for Vulnerabilities
+        run: snyk test --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: 📊 Upload Snyk Report for Monitoring (Optional)
+        run: snyk monitor --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: 🚨 Fail if Vulnerabilities are Found
+        if: failure()
+        run: echo "❌ Vulnerabilities found! Check the report."

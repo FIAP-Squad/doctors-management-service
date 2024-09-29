@@ -1,11 +1,30 @@
-## [Pull Request Title] Ex - New Contributor
+## 🚀 [Pull Request Title] - e.g., Add New Contributor
 
-### :beers: [Subtitle Main Change] Ex - Third Party XYZ Team
+### 🛠️ Summary:
+- Briefly describe the main change.
+- Example: "This PR adds XYZ contributor to the ABC project."
 
-#### [Short description] EX - This collaborator will work on the ABC project
+### 🔍 Context:
+- Why is this change necessary? 
+- Example: "The XYZ project is starting, and the following contributors need access: Foo, Bar."
 
-*[Detail of this change] EX - With the start of the XYZ project, we need to give access to the contributors below:*
-- Foo
-- Bar
+### 📖 Best Practices:
+1. **Keep it concise**: Small, focused PRs are easier to review.
+2. **Explain decisions**: Document any significant choices.
+3. **Link issues**: Reference any relevant tickets or issues.
+4. **Meaningful commits**: Ensure commit messages are clear and informative.
 
-*It will be reviewed and approved or rejected by the administrators.*
+### 🔗 Useful Links:
+- [Project Documentation](#)
+- [Contribution Guide](#)
+- [Code Style Guidelines](#)
+
+### 👥 Reviewers:
+-   Gabriel Rodrigues
+
+### 🗓️ Deadline:
+- Expected review date: **DD/MM/YYYY**
+
+---
+
+**Thank you for your contribution!** 🚀👏
