@@ -1,2 +1,2 @@
-export * from './CreateBusinessPartner'
+export * from './CreateDoctor'
 export * from './SignIn'

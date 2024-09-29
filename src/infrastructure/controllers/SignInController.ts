@@ -1,7 +1,7 @@
-import { type IHTTPResponse, type IController, type IValidation, type IHTTPRequest, Presenter } from '@/infrastructure'
+import { type IHTTPResponse, type Controller, type IValidation, type IHTTPRequest, Presenter } from '@/infrastructure'
 import { type ISignIn } from '@/usecases'
 
-export class SignInController implements IController {
+export class SignInController implements Controller {
   constructor (
     private readonly _validation: IValidation,
     private readonly _usecase: ISignIn

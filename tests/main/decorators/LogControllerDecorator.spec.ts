@@ -1,8 +1,8 @@
-import { type ILogErrorDAO, type IController, type IHTTPRequest, type IHTTPResponse, Presenter } from '@/infrastructure'
+import { type ILogErrorDAO, type Controller, type IHTTPRequest, type IHTTPResponse, Presenter } from '@/infrastructure'
 import { LogControllerDecorator } from '@/main/decorators'
 
-const mockController = (): IController => {
-  class ControllerStub implements IController {
+const mockController = (): Controller => {
+  class ControllerStub implements Controller {
     async handle (request: IHTTPRequest): Promise<IHTTPResponse> {
       const response: IHTTPResponse = { body: {}, statusCode: 200 }
       return await Promise.resolve(response)
@@ -22,7 +22,7 @@ const mockLogErrorRepository = (): ILogErrorDAO => {
 
 interface SutTypes {
   sut: LogControllerDecorator
-  controllerStub: IController
+  controllerStub: Controller
   logErrorRepositoryStub: ILogErrorDAO
 }
 
@@ -37,7 +37,7 @@ const mockSut = (): SutTypes => {
   }
 }
 
-describe('Log IController Decorator', () => {
+describe('Log Controller Decorator', () => {
   test('Should call controller handle ', async () => {
     const request = {
       body: {

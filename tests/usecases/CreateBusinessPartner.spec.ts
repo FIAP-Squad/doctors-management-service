@@ -1,6 +1,6 @@
 import { type EventMapParams, type IEmitterGateway, type IEventMapDAO, type ISignUpGateway, type CognitoParams, type IUpdateEntityPasswordGateway, type IDeleteGateway } from '@/infrastructure'
 import { type AdminCreateUserCommandOutput } from '@aws-sdk/client-cognito-identity-provider'
-import { CreateBusinessPartner } from '@/usecases'
+import { CreateDoctor } from '@/usecases'
 
 const mockIdentity = (): any => ({
   User: {
@@ -91,7 +91,7 @@ const mockEmitter = (): IEmitterGateway => {
 }
 
 type SutTypes = {
-  sut: CreateBusinessPartner
+  sut: CreateDoctor
   DAOStub: IEventMapDAO
   signupGatewayStub: ISignUpGateway
   updateGatewayStub: IUpdateEntityPasswordGateway
@@ -105,7 +105,7 @@ const mockSut = (): SutTypes => {
   const updateGatewayStub = mockUpdateGateway()
   const deleteGatewayStub = mockDeleteGateway()
   const emitterStub = mockEmitter()
-  const sut = new CreateBusinessPartner(DAOStub, signupGatewayStub, updateGatewayStub, deleteGatewayStub, emitterStub)
+  const sut = new CreateDoctor(DAOStub, signupGatewayStub, updateGatewayStub, deleteGatewayStub, emitterStub)
   return {
     sut,
     DAOStub,

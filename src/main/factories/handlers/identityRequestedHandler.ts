@@ -1,10 +1,10 @@
-import { EmitterGateway, EventMapDAO, type IHandler, IdentityGateway, IdentityRequestedHandler } from '@/infrastructure'
-import { CreateBusinessPartner } from '@/usecases'
+import { EmitterGateway, EventMapDAO, type Handler, IdentityGateway, IdentityRequestedCreated } from '@/infrastructure'
+import { CreateDoctor } from '@/usecases'
 
-export const identityRequestedHandler = (): IHandler => {
+export const IdentityRequestedCreated = (): Handler => {
   const DAO = new EventMapDAO()
   const gateway = new IdentityGateway()
   const emitter = new EmitterGateway()
-  const usecase = new CreateBusinessPartner(DAO, gateway, gateway, gateway, emitter)
-  return new IdentityRequestedHandler(usecase)
+  const usecase = new CreateDoctor(DAO, gateway, gateway, gateway, emitter)
+  return new IdentityRequestedCreated(usecase)
 }
