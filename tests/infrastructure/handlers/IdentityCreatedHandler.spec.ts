@@ -40,7 +40,7 @@ describe('IdentityCreatedHandler', () => {
     const event = mockEvent()
     const spy = jest.spyOn(CreateDoctorStub, 'execute')
     await sut.handle(event)
-    expect(spy).toHaveBeenCalledWith(JSON.parse(event))
+    expect(spy).toHaveBeenCalledWith(event)
   })
 
   test('Should throw if ICreateDoctor throws', async () => {
