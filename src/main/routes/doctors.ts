@@ -4,5 +4,6 @@ import { makeLoadDoctorController, makeCreateAvailabilityController } from '@/ma
 
 export const doctors = (router: Router): void => {
   router.get('/doctors', adaptRoute(makeLoadDoctorController()))
+  router.get('/doctors/{id}/availability', adaptRoute(makeCreateAvailabilityController()))
   router.post('/doctors/availability', adaptRoute(makeCreateAvailabilityController()))
 }
