@@ -1,5 +1,5 @@
 import { LoadAvailabilities } from '@/usecases'
-import { type ILoadAvailabilityRepository } from '@/infrastructure'
+import { type ILoadAvailabilitiesRepository } from '@/infrastructure'
 import { type DoctorAvailability } from '@/domain'
 
 const mockDoctorAvailability = (): DoctorAvailability[] => ([
@@ -22,18 +22,18 @@ const mockDoctorAvailability = (): DoctorAvailability[] => ([
 ])
 
 // Mock do repositório
-const mockLoadAvailabilityRepository = (): ILoadAvailabilityRepository => {
-  class LoadAvailabilityRepositoryStub implements ILoadAvailabilityRepository {
+const mockLoadAvailabilityRepository = (): ILoadAvailabilitiesRepository => {
+  class LoadAvailabilitiesRepositoryStub implements ILoadAvailabilitiesRepository {
     async findAvailabilitiesByDoctorId (doctorId: number): Promise<DoctorAvailability[]> {
       return await Promise.resolve(mockDoctorAvailability())
     }
   }
-  return new LoadAvailabilityRepositoryStub()
+  return new LoadAvailabilitiesRepositoryStub()
 }
 
 type SutTypes = {
   sut: LoadAvailabilities
-  repositoryStub: ILoadAvailabilityRepository
+  repositoryStub: ILoadAvailabilitiesRepository
 }
 
 const mockSut = (): SutTypes => {

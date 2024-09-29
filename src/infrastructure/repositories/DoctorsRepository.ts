@@ -13,11 +13,11 @@ export interface ICreateAvailabilityRepository {
   createAvailability: ({ email, date, startTime, endTime }) => Promise<void>
 }
 
-export interface ILoadAvailabilityRepository {
+export interface ILoadAvailabilitiesRepository {
   findAvailabilitiesByDoctorId: (doctorId: number) => Promise<DoctorAvailability[]>
 }
 
-export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository, ILoadAvailabilityRepository {
+export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository, ILoadAvailabilitiesRepository {
   async findAvailabilitiesByDoctorId (doctorId: number): Promise<DoctorAvailability[]> {
     return await prismaClient.availability.findMany({
       where: { doctorId },

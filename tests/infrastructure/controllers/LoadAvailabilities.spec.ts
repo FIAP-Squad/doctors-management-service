@@ -1,7 +1,6 @@
-import { LoadAvailabilitiesController } from '@/infrastructure'
-import { type IValidation, Presenter, type IHTTPRequest, type IHTTPResponse } from '@/infrastructure'
-import { type ILoadAvailabilities } from '@/usecases'
 import { type DoctorAvailability } from '@/domain'
+import { type ILoadAvailabilities } from '@/usecases'
+import { LoadAvailabilitiesController, type IValidation, Presenter, type IHTTPRequest, type IHTTPResponse } from '@/infrastructure'
 
 const mockDoctorAvailability = (): DoctorAvailability[] => ([
   {
