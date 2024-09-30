@@ -2,7 +2,7 @@ import { RequiredFieldsValidation, ValidationComposite, type IValidation } from 
 
 export const makeCreateAppointmentValidation = (): IValidation => {
   const validations: IValidation[] = []
-  for (const field of ['patientId', 'availabilityId']) {
+  for (const field of ['doctor', 'patient', 'availability']) {
     validations.push(new RequiredFieldsValidation(field))
   }
   return new ValidationComposite(validations)

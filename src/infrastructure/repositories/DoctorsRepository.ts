@@ -22,7 +22,11 @@ export interface ILoadAvailabilitiesRepository {
 }
 
 export interface ICreateAppointmentRepository {
-  createAppointment: ({ patientId, availabilityId }) => Promise<void>
+  createAppointment: ({ patientId, availabilityId }) => Promise<number>
+}
+
+export interface IDeleteAppointmentRepository {
+  deleteAppointment: ({ id }) => Promise<void>
 }
 
 export class DoctorRepository implements
@@ -30,7 +34,8 @@ export class DoctorRepository implements
   ICreateAvailabilitiesRepository,
   ILoadAvailabilitiesRepository,
   IUpdateAvailabilitiesRepository,
-  ICreateAppointmentRepository {
+  ICreateAppointmentRepository,
+  IDeleteAppointmentRepository {
   async findAvailabilitiesByDoctorId (doctorId: number): Promise<Availability[]> {
     return await prismaClient.availability.findMany({
       where: { doctorId: Number(doctorId) },
@@ -62,12 +67,19 @@ export class DoctorRepository implements
     }
   }
 
-  async createAppointment ({ patientId, availabilityId }): Promise<void> {
-    await prismaClient.appointment.create({
+  async createAppointment ({ patientId, availabilityId }): Promise<number> {
+    const { id } = await prismaClient.appointment.create({
       data: {
         patientId: Number(patientId),
         availabilityId: Number(availabilityId)
       }
+    })
+    return id
+  }
+
+  async deleteAppointment ({ id }): Promise<void> {
+    await prismaClient.appointment.delete({
+      where: { id: Number(id) }
     })
   }
 
