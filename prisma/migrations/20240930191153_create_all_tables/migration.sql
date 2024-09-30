@@ -1,40 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Appointment` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Availability` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Doctor` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `IdentityProperties` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `TimeSlot` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE `Appointment` DROP FOREIGN KEY `Appointment_doctorId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `Appointment` DROP FOREIGN KEY `Appointment_timeSlotId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `Availability` DROP FOREIGN KEY `Availability_doctorId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `Availability` DROP FOREIGN KEY `Availability_timeSlotId_fkey`;
-
--- DropTable
-DROP TABLE `Appointment`;
-
--- DropTable
-DROP TABLE `Availability`;
-
--- DropTable
-DROP TABLE `Doctor`;
-
--- DropTable
-DROP TABLE `IdentityProperties`;
-
--- DropTable
-DROP TABLE `TimeSlot`;
-
 -- CreateTable
 CREATE TABLE `doctor` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -43,7 +6,7 @@ CREATE TABLE `doctor` (
     `crm` VARCHAR(20) NOT NULL,
     `cpf` VARCHAR(11) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `doctor_email_key`(`email`),
     UNIQUE INDEX `doctor_crm_key`(`crm`),
@@ -53,10 +16,25 @@ CREATE TABLE `doctor` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `patient` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(50) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    `cpf` VARCHAR(11) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `patient_email_key`(`email`),
+    UNIQUE INDEX `patient_cpf_key`(`cpf`),
+    INDEX `idx_doctor_email`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `availability` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `status` VARCHAR(10) NOT NULL DEFAULT 'available',
-    `date` DATETIME(3) NOT NULL,
+    `date` VARCHAR(191) NOT NULL,
     `doctorId` INTEGER NOT NULL,
     `timeSlotId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -69,9 +47,8 @@ CREATE TABLE `availability` (
 -- CreateTable
 CREATE TABLE `timeSlot` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `startTime` DATETIME(3) NOT NULL,
-    `endTime` DATETIME(3) NOT NULL,
-    `availabilityId` INTEGER NOT NULL,
+    `startTime` VARCHAR(191) NOT NULL,
+    `endTime` VARCHAR(191) NOT NULL,
 
     INDEX `idx_timeslot_start_end`(`startTime`, `endTime`),
     PRIMARY KEY (`id`)
@@ -80,16 +57,14 @@ CREATE TABLE `timeSlot` (
 -- CreateTable
 CREATE TABLE `appointment` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `doctorId` INTEGER NOT NULL,
     `patientId` INTEGER NOT NULL,
-    `timeSlotId` INTEGER NOT NULL,
-    `status` VARCHAR(20) NOT NULL,
+    `availabilityId` INTEGER NOT NULL,
+    `status` VARCHAR(20) NOT NULL DEFAULT 'scheduled',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX `idx_appointment_doctor`(`doctorId`),
+    UNIQUE INDEX `appointment_availabilityId_key`(`availabilityId`),
     INDEX `idx_appointment_patient`(`patientId`),
-    INDEX `idx_appointment_timeslot`(`timeSlotId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -116,7 +91,4 @@ ALTER TABLE `availability` ADD CONSTRAINT `availability_doctorId_fkey` FOREIGN K
 ALTER TABLE `availability` ADD CONSTRAINT `availability_timeSlotId_fkey` FOREIGN KEY (`timeSlotId`) REFERENCES `timeSlot`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `appointment` ADD CONSTRAINT `appointment_doctorId_fkey` FOREIGN KEY (`doctorId`) REFERENCES `doctor`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `appointment` ADD CONSTRAINT `appointment_timeSlotId_fkey` FOREIGN KEY (`timeSlotId`) REFERENCES `timeSlot`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `appointment` ADD CONSTRAINT `appointment_availabilityId_fkey` FOREIGN KEY (`availabilityId`) REFERENCES `availability`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
