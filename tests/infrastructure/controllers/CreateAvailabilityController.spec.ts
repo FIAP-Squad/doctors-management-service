@@ -1,12 +1,23 @@
 import { CreateAvailabilityController, Presenter, type IHTTPRequest, type IValidation } from '@/infrastructure'
-import { type ICreateAvailability } from '@/usecases'
+import { type ICreateAvailabilities } from '@/usecases'
 
 const mockRequest = (): IHTTPRequest => ({
   body: {
-    email: 'doctor.john.doe@example.com',
-    date: 1728518400000,
-    startTime: 28800000,
-    endTime: 43200000
+    doctorId: 1,
+    availabilities: [
+      {
+        id: 1,
+        date: '2024-10-10T00:00:00Z',
+        status: 'available',
+        timeSlotId: 0
+      },
+      {
+        id: 2,
+        date: '2024-10-11T00:00:00Z',
+        status: 'available',
+        timeSlotId: 2
+      }
+    ]
   }
 })
 
@@ -19,8 +30,8 @@ const mockValidation = (): IValidation => {
   return new ValidationStub()
 }
 
-const mockCreateAvailability = (): ICreateAvailability => {
-  class CreateAvailabilityStub implements ICreateAvailability {
+const mockCreateAvailability = (): ICreateAvailabilities => {
+  class CreateAvailabilityStub implements ICreateAvailabilities {
     async execute (data: any): Promise<void> {
       return await Promise.resolve()
     }
@@ -31,7 +42,7 @@ const mockCreateAvailability = (): ICreateAvailability => {
 type SutTypes = {
   sut: CreateAvailabilityController
   validationStub: IValidation
-  createAvailabilityStub: ICreateAvailability
+  createAvailabilityStub: ICreateAvailabilities
 }
 
 const mockSut = (): SutTypes => {
@@ -45,7 +56,7 @@ const mockSut = (): SutTypes => {
   }
 }
 
-describe('CreateAvailability Controller', () => {
+describe('CreateAvailabilities Controller', () => {
   test('Should return 400 if validation fails', async () => {
     const { sut, validationStub } = mockSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error('Validation Error'))
@@ -67,10 +78,21 @@ describe('CreateAvailability Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     expect(spy).toHaveBeenCalledWith({
-      email: request.body.email,
-      date: request.body.date,
-      startTime: request.body.startTime,
-      endTime: request.body.endTime
+      doctorId: 1,
+      availabilities: [
+        {
+          id: 1,
+          date: '2024-10-10T00:00:00Z',
+          status: 'available',
+          timeSlotId: 0
+        },
+        {
+          id: 2,
+          date: '2024-10-11T00:00:00Z',
+          status: 'available',
+          timeSlotId: 2
+        }
+      ]
     })
   })
 

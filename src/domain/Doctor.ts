@@ -1,14 +1,14 @@
 import { Name, Email, CRM, CPF } from '@/domain'
 
-export type DoctorAvailability = {
-  id: number
-  date: Date
-  timeSlot: Array<{
-    status: string
+export type Availability = {
+  id?: number
+  date: string
+  status: string
+  timeSlot: {
     id: number
-    startTime: Date
-    endTime: Date
-  }>
+    startTime: string
+    endTime: string
+  }
 }
 
 export type DoctorData = {

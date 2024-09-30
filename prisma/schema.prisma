@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,34 +9,40 @@ datasource db {
 
 model doctor {
   id           Int            @id @default(autoincrement())
-  name         String
-  email        String         @unique
-  crm          String         @unique
-  cpf          String         @unique
+  name         String         @db.VarChar(50)
+  email        String         @unique @db.VarChar(50)
+  crm          String         @unique @db.VarChar(20)
+  cpf          String         @unique @db.VarChar(11)
   availability availability[]
   appointment  appointment[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) // Mantive o padrão "updatedAt" para consistência
+
+  @@index([email], name: "idx_doctor_email")
 }
 
 model availability {
-  id       Int        @id @default(autoincrement())
-  date     DateTime
-  doctorId Int
-  doctor   doctor     @relation(fields: [doctorId], references: [id])
-  timeSlot timeSlot[]
+  id         Int      @id @default(autoincrement())
+  status     String   @default("available") @db.VarChar(10)
+  date       String
+  doctorId   Int
+  doctor     doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  timeSlotId Int
+  timeSlot   timeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 
-  @@index([doctorId])
+  @@index([doctorId, timeSlotId], name: "idx_availability_doctor_timeslot")
 }
 
 model timeSlot {
-  id             Int           @id @default(autoincrement())
-  status         String        @default("available")
-  startTime      DateTime
-  endTime        DateTime
-  availabilityId Int
-  availability   availability  @relation(fields: [availabilityId], references: [id])
+  id             Int            @id @default(autoincrement())
+  startTime      String
+  endTime        String
   appointment    appointment[]
+  availability   availability[]
 
-  @@index([availabilityId])
+  @@index([startTime, endTime], name: "idx_timeslot_start_end")
 }
 
 model appointment {
@@ -47,20 +50,23 @@ model appointment {
   doctorId   Int
   patientId  Int
   timeSlotId Int
+  status     String   @db.VarChar(20)
   createdAt  DateTime @default(now())
-  status     String
-  doctor     doctor   @relation(fields: [doctorId], references: [id])
-  timeSlot   timeSlot @relation(fields: [timeSlotId], references: [id])
+  updatedAt  DateTime @default(now())
+  doctor     doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  timeSlot   timeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
 
-  @@index([doctorId])
-  @@index([patientId])
-  @@index([timeSlotId])
+  @@index([doctorId], name: "idx_appointment_doctor")
+  @@index([patientId], name: "idx_appointment_patient")
+  @@index([timeSlotId], name: "idx_appointment_timeslot")
 }
 
 model identityProperties {
-  id                  String @id @default(uuid())
-  businessPartnerType String @unique
-  clientId            String @unique
-  userPoolId          String @unique
-  queue               String @unique
+  id                  String @id @default(uuid()) @db.Char(36)
+  businessPartnerType String @unique @db.VarChar(10)
+  clientId            String @unique @db.VarChar(50)
+  userPoolId          String @unique @db.VarChar(50)
+  queue               String @unique @db.VarChar(50)
+
+  @@index([clientId, userPoolId], name: "idx_identity_client_userpool")
 }
