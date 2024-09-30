@@ -1,19 +1,17 @@
-import { type DoctorAvailability } from '@/domain'
+import { type Availability } from '@/domain'
 import { type ILoadAvailabilities } from '@/usecases'
 import { LoadAvailabilitiesController, type IValidation, Presenter, type IHTTPRequest, type IHTTPResponse } from '@/infrastructure'
 
-const mockDoctorAvailability = (): DoctorAvailability[] => ([
+const mockDoctorAvailability = (): any => ([
   {
     id: 1,
-    date: new Date('2024-09-30T10:00:00Z'),
-    timeSlot: [
-      {
-        id: 1,
-        status: 'available',
-        startTime: new Date('2024-09-30T10:00:00Z'),
-        endTime: new Date('2024-09-30T10:30:00Z')
-      }
-    ]
+    date: '2024-10-10T00:00:00Z',
+    status: 'available',
+    timeSlot: {
+      id: 1,
+      startTime: '0000-00-00T10:30:00Z',
+      endTime: '0000-00-00T10:30:00Z'
+    }
   }
 ])
 
@@ -28,7 +26,7 @@ const mockValidation = (): IValidation => {
 
 const mockLoadAvailabilities = (): ILoadAvailabilities => {
   class LoadAvailabilitiesStub implements ILoadAvailabilities {
-    async execute (doctorId: number): Promise<DoctorAvailability[]> {
+    async execute (doctorId: number): Promise<Availability[]> {
       return await Promise.resolve(mockDoctorAvailability())
     }
   }

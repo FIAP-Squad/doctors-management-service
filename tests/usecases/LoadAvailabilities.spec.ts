@@ -1,32 +1,23 @@
 import { LoadAvailabilities } from '@/usecases'
 import { type ILoadAvailabilitiesRepository } from '@/infrastructure'
-import { type DoctorAvailability } from '@/domain'
+import { type Availability } from '@/domain'
 
-const mockDoctorAvailability = (): DoctorAvailability[] => ([
+const mockDoctorAvailability = (): Availability[] => ([
   {
     id: 1,
-    date: new Date('2024-09-30T10:00:00Z'),
-    timeSlot: [
-      {
-        status: 'busy',
-        id: 1,
-        startTime: new Date('2024-09-30T10:00:00Z'),
-        endTime: new Date('2024-09-30T10:30:00Z')
-      },
-      {
-        id: 2,
-        status: 'available',
-        startTime: new Date('2024-09-30T10:30:00Z'),
-        endTime: new Date('2024-09-30T11:00:00Z')
-      }
-    ]
+    date: '2024-09-30T00:00:00Z',
+    status: 'busy',
+    timeSlot: {
+      id: 1,
+      startTime: '0000-00-00T10:30:00Z',
+      endTime: '0000-00-00T10:30:00Z'
+    }
   }
 ])
 
-// Mock do repositório
 const mockLoadAvailabilityRepository = (): ILoadAvailabilitiesRepository => {
   class LoadAvailabilitiesRepositoryStub implements ILoadAvailabilitiesRepository {
-    async findAvailabilitiesByDoctorId (doctorId: number): Promise<DoctorAvailability[]> {
+    async findAvailabilitiesByDoctorId (doctorId: number): Promise<Availability[]> {
       return await Promise.resolve(mockDoctorAvailability())
     }
   }
