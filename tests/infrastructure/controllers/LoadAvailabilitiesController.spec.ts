@@ -2,7 +2,7 @@ import { type Availability } from '@/domain'
 import { type ILoadAvailabilities } from '@/usecases'
 import { LoadAvailabilitiesController, type IValidation, Presenter, type IHTTPRequest, type IHTTPResponse } from '@/infrastructure'
 
-const mockDoctorAvailability = (): any => ([
+const mockDoctorAvailabilities = (): any => ([
   {
     id: 1,
     date: '2024-10-10T00:00:00Z',
@@ -27,7 +27,7 @@ const mockValidation = (): IValidation => {
 const mockLoadAvailabilities = (): ILoadAvailabilities => {
   class LoadAvailabilitiesStub implements ILoadAvailabilities {
     async execute (doctorId: number): Promise<Availability[]> {
-      return await Promise.resolve(mockDoctorAvailability())
+      return await Promise.resolve(mockDoctorAvailabilities())
     }
   }
   return new LoadAvailabilitiesStub()
@@ -72,14 +72,14 @@ describe('LoadAvailabilitiesController', () => {
     const spy = jest.spyOn(loadAvailabilitiesStub, 'execute')
     const request = mockRequest()
     await sut.handle(request)
-    expect(spy).toHaveBeenCalledWith(request.params.doctor)
+    expect(spy).toHaveBeenCalledWith(request.params.doctorId)
   })
 
   test('Should return 200 and a list of availabilities on success', async () => {
     const { sut } = mockSut()
     const request = mockRequest()
     const response: IHTTPResponse = await sut.handle(request)
-    expect(response).toEqual(Presenter.ok(mockDoctorAvailability()))
+    expect(response).toEqual(Presenter.ok(mockDoctorAvailabilities()))
   })
 
   test('Should return 500 if usecase throws', async () => {

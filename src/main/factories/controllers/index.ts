@@ -1,3 +1,4 @@
 export * from './makeSignInController'
-export * from './makeCreateAvailabilityController'
+export * from './makeCreateAvailabilitiesController'
 export * from './makeLoadAvailabilitiesController'
+export * from './makeUpdateAvailabilitiesController'

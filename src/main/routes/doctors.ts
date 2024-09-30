@@ -1,9 +1,15 @@
 import { type Router } from 'express'
 import { adaptRoute } from '@/main/adapters'
-import { makeLoadDoctorController, makeCreateAvailabilityController, makeLoadAvailabilitiesController } from '@/main/factories/controllers'
+import {
+  makeLoadDoctorController,
+  makeCreateAvailabilitiesController,
+  makeLoadAvailabilitiesController,
+  makeUpdateAvailabilitiesController
+} from '@/main/factories/controllers'
 
 export const doctors = (router: Router): void => {
   router.get('/doctors', adaptRoute(makeLoadDoctorController()))
-  router.get('/doctors/:id/availability', adaptRoute(makeLoadAvailabilitiesController()))
-  router.post('/doctors/availability', adaptRoute(makeCreateAvailabilityController()))
+  router.get('/doctors/:doctorId/availability', adaptRoute(makeLoadAvailabilitiesController()))
+  router.post('/doctors/availability/batch', adaptRoute(makeCreateAvailabilitiesController()))
+  router.patch('/doctors/:doctorId/availability/batch', adaptRoute(makeUpdateAvailabilitiesController()))
 }

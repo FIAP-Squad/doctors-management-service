@@ -19,6 +19,6 @@ export class CreateAvailabilities implements ICreateAvailabilities {
   ) { }
 
   async execute ({ doctorId, availabilities }: CreateAvailabilitiesParams): Promise<void> {
-    await this._repository.createAvailability({ doctorId, availabilities })
+    await this._repository.createAvailabilities({ doctorId, availabilities })
   }
 }
