@@ -2,7 +2,7 @@ import { RequiredFieldsValidation, ValidationComposite, type IValidation } from 
 
 export const makeCreateAvailabilityValidation = (): IValidation => {
   const validations: IValidation[] = []
-  for (const field of ['email', 'date', 'startTime', 'endTime']) {
+  for (const field of ['doctorId', 'availabilities']) {
     validations.push(new RequiredFieldsValidation(field))
   }
   return new ValidationComposite(validations)

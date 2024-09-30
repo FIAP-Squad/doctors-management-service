@@ -1,5 +1,5 @@
 import { prismaClient } from '@/infrastructure'
-import { type Doctor, type DoctorData, type DoctorAvailability } from '@/domain'
+import { type Doctor, type DoctorData, type Availability } from '@/domain'
 
 export interface ICreateDoctorRepository {
   create: (value: Doctor) => Promise<void>
@@ -9,26 +9,25 @@ export interface ILoadDoctorRepository {
   load: (query: any) => Promise<DoctorData[]>
 }
 
-export interface ICreateAvailabilityRepository {
-  createAvailability: ({ email, date, startTime, endTime }) => Promise<void>
+export interface ICreateAvailabilitiesRepository {
+  createAvailability: (params: { doctorId: number, availabilities: Array<{ date: string, status: string, timeSlotId: number }> }) => Promise<void>
 }
 
 export interface ILoadAvailabilitiesRepository {
-  findAvailabilitiesByDoctorId: (doctorId: number) => Promise<DoctorAvailability[]>
+  findAvailabilitiesByDoctorId: (doctorId: number) => Promise<Availability[]>
 }
 
-export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilityRepository, ILoadAvailabilitiesRepository {
-  async findAvailabilitiesByDoctorId (doctorId: number): Promise<DoctorAvailability[]> {
+export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilitiesRepository, ILoadAvailabilitiesRepository {
+  async findAvailabilitiesByDoctorId (doctorId: number): Promise<Availability[]> {
     return await prismaClient.availability.findMany({
       where: { doctorId },
       select: {
         id: true,
         date: true,
+        status: true,
         timeSlot: {
-          where: { status: 'available' },
           select: {
             id: true,
-            status: true,
             startTime: true,
             endTime: true
           }
@@ -37,26 +36,18 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
     })
   }
 
-  async createAvailability ({ email, date, startTime, endTime, status }): Promise<void> {
-    await prismaClient.$transaction(async prisma => {
-      const doctor = await prisma.doctor.findUnique({
-        where: { email }
-      })
-
-      await prisma.availability.create({
+  async createAvailability ({ doctorId, availabilities }: { doctorId: number, availabilities: Array<{ date: string, status: string, timeSlotId: number }> }): Promise<void> {
+    console.log({ doctorId, availabilities })
+    for (const availability of availabilities) {
+      await prismaClient.availability.create({
         data: {
-          date,
-          doctorId: doctor.id,
-          timeSlot: {
-            create: {
-              status,
-              startTime,
-              endTime
-            }
-          }
+          date: availability.date,
+          status: availability.status,
+          timeSlotId: availability.timeSlotId,
+          doctorId
         }
       })
-    })
+    }
   }
 
   async create (doctor: Doctor): Promise<void> {
