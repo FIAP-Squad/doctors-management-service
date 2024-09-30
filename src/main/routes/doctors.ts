@@ -4,7 +4,8 @@ import {
   makeLoadDoctorController,
   makeCreateAvailabilitiesController,
   makeLoadAvailabilitiesController,
-  makeUpdateAvailabilitiesController
+  makeUpdateAvailabilitiesController,
+  makeCreateAppointmentController
 } from '@/main/factories/controllers'
 
 export const doctors = (router: Router): void => {
@@ -12,4 +13,5 @@ export const doctors = (router: Router): void => {
   router.get('/doctors/:doctorId/availability', adaptRoute(makeLoadAvailabilitiesController()))
   router.post('/doctors/availability/batch', adaptRoute(makeCreateAvailabilitiesController()))
   router.patch('/doctors/:doctorId/availability/batch', adaptRoute(makeUpdateAvailabilitiesController()))
+  router.post('/doctors/appointment', adaptRoute(makeCreateAppointmentController()))
 }
