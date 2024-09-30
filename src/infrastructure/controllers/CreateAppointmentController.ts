@@ -11,8 +11,8 @@ export class CreateAppointmentController implements Controller {
     try {
       const error = this._validation.validate(body)
       if (error) return Presenter.badRequest(error)
-      const { doctorId, patientId, availabilityId } = body
-      await this._usecase.execute({ doctorId, patientId, availabilityId })
+      const { doctor, patient, availability } = body
+      await this._usecase.execute({ doctor, patient, availability })
       return Presenter.created()
     } catch (error) {
       return Presenter.serverError(error)

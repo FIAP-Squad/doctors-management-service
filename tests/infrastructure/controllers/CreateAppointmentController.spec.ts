@@ -3,9 +3,19 @@ import { type ICreateAppointment } from '@/usecases'
 
 const mockRequest = (): IHTTPRequest => ({
   body: {
-    doctorId: 1,
-    patientId: 1,
-    availabilityId: 2
+    doctor: {
+      id: 1,
+      name: 'Gabriel'
+    },
+    patient: {
+      id: 1,
+      name: 'Gabriel'
+    },
+    availability: {
+      id: 1,
+      startTime: '09h00',
+      endTime: '09h03'
+    }
   }
 })
 
@@ -66,9 +76,9 @@ describe('CreateAppointment Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     expect(spy).toHaveBeenCalledWith({
-      doctorId: request.body.doctorId,
-      patientId: request.body.patientId,
-      availabilityId: request.body.availabilityId
+      doctor: request.body.doctor,
+      patient: request.body.patient,
+      availability: request.body.availability
     })
   })
 
