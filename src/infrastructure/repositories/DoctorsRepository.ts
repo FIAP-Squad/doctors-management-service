@@ -10,17 +10,25 @@ export interface ILoadDoctorRepository {
 }
 
 export interface ICreateAvailabilitiesRepository {
-  createAvailability: (params: { doctorId: number, availabilities: Array<{ date: string, status: string, timeSlotId: number }> }) => Promise<void>
+  createAvailabilities: (params: { doctorId: number, availabilities: Array<{ date: string, status: string, timeSlotId: number }> }) => Promise<void>
+}
+
+export interface IUpdateAvailabilitiesRepository {
+  updateAvailabilities: (params: { doctorId: number, availabilities: Array<{ id: number, status: string }> }) => Promise<void>
 }
 
 export interface ILoadAvailabilitiesRepository {
   findAvailabilitiesByDoctorId: (doctorId: number) => Promise<Availability[]>
 }
 
-export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailabilitiesRepository, ILoadAvailabilitiesRepository {
+export class DoctorRepository implements
+  ICreateDoctorRepository,
+  ICreateAvailabilitiesRepository,
+  ILoadAvailabilitiesRepository,
+  IUpdateAvailabilitiesRepository {
   async findAvailabilitiesByDoctorId (doctorId: number): Promise<Availability[]> {
     return await prismaClient.availability.findMany({
-      where: { doctorId },
+      where: { doctorId: Number(doctorId) },
       select: {
         id: true,
         date: true,
@@ -36,8 +44,7 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
     })
   }
 
-  async createAvailability ({ doctorId, availabilities }: { doctorId: number, availabilities: Array<{ date: string, status: string, timeSlotId: number }> }): Promise<void> {
-    console.log({ doctorId, availabilities })
+  async createAvailabilities ({ doctorId, availabilities }): Promise<void> {
     for (const availability of availabilities) {
       await prismaClient.availability.create({
         data: {
@@ -46,6 +53,15 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
           timeSlotId: availability.timeSlotId,
           doctorId
         }
+      })
+    }
+  }
+
+  async updateAvailabilities ({ doctorId, availabilities }): Promise<void> {
+    for (const availability of availabilities) {
+      await prismaClient.availability.update({
+        where: { id: Number(availability.id), doctorId: Number(doctorId) },
+        data: { status: availability.status }
       })
     }
   }
@@ -73,29 +89,4 @@ export class DoctorRepository implements ICreateDoctorRepository, ICreateAvailab
       }
     })
   }
-
-  // async update ({ id, body }: UpdateOrderParamsRepository): Promise<void> {
-  //   await prismaClient.order.update({ where: { id }, data: { status: body.status } })
-  // }
-
-  // async loadAll (filter: any): Promise<Array<WithId<OrdersDTO>>> {
-  //   return await prismaClient.order.findMany({
-  //     where: filter,
-  //     select: {
-  //       id: true,
-  //       customer: true,
-  //       status: true,
-  //       amount: true,
-  //       items: {
-  //         select: {
-  //           totalItems: true,
-  //           unitPrice: true,
-  //           amount: true,
-  //           orderId: true,
-  //           productId: true
-  //         }
-  //       }
-  //     }
-  //   })
-  // }
 }

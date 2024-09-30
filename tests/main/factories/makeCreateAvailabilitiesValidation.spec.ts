@@ -1,11 +1,11 @@
 import { RequiredFieldsValidation, ValidationComposite, type IValidation } from '@/infrastructure'
-import { makeCreateAvailabilityValidation } from '@/main/factories/validations'
+import { makeCreateAvailabilitiesValidation } from '@/main/factories/validations'
 
 jest.mock('@/infrastructure/validations/ValidationComposite')
 
-describe('Create Availability IValidation Factory', () => {
+describe('Create Availabilities IValidation Factory', () => {
   test('Should call validation with all validations ', () => {
-    makeCreateAvailabilityValidation()
+    makeCreateAvailabilitiesValidation()
     const validations: IValidation[] = []
     for (const field of ['doctorId', 'availabilities']) {
       validations.push(new RequiredFieldsValidation(field))

@@ -1,8 +1,8 @@
 import { RequiredFieldsValidation, ValidationComposite, type IValidation } from '@/infrastructure'
 
-export const makeLoadAvailabilitiesValidation = (): IValidation => {
+export const makeUpdateAvailabilitiesValidation = (): IValidation => {
   const validations: IValidation[] = []
-  for (const field of ['doctorId']) {
+  for (const field of ['doctorId', 'availabilities']) {
     validations.push(new RequiredFieldsValidation(field))
   }
   return new ValidationComposite(validations)

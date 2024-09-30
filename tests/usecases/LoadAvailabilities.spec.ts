@@ -2,7 +2,7 @@ import { LoadAvailabilities } from '@/usecases'
 import { type ILoadAvailabilitiesRepository } from '@/infrastructure'
 import { type Availability } from '@/domain'
 
-const mockDoctorAvailability = (): Availability[] => ([
+const mockDoctorAvailabilities = (): Availability[] => ([
   {
     id: 1,
     date: '2024-09-30T00:00:00Z',
@@ -15,10 +15,10 @@ const mockDoctorAvailability = (): Availability[] => ([
   }
 ])
 
-const mockLoadAvailabilityRepository = (): ILoadAvailabilitiesRepository => {
+const mockLoadAvailabilitiesRepository = (): ILoadAvailabilitiesRepository => {
   class LoadAvailabilitiesRepositoryStub implements ILoadAvailabilitiesRepository {
     async findAvailabilitiesByDoctorId (doctorId: number): Promise<Availability[]> {
-      return await Promise.resolve(mockDoctorAvailability())
+      return await Promise.resolve(mockDoctorAvailabilities())
     }
   }
   return new LoadAvailabilitiesRepositoryStub()
@@ -30,7 +30,7 @@ type SutTypes = {
 }
 
 const mockSut = (): SutTypes => {
-  const repositoryStub = mockLoadAvailabilityRepository()
+  const repositoryStub = mockLoadAvailabilitiesRepository()
   const sut = new LoadAvailabilities(repositoryStub)
   return { sut, repositoryStub }
 }
@@ -48,7 +48,7 @@ describe('LoadAvailabilities', () => {
     const { sut } = mockSut()
     const doctorId = 1
     const availabilities = await sut.execute(doctorId)
-    expect(availabilities).toEqual(mockDoctorAvailability())
+    expect(availabilities).toEqual(mockDoctorAvailabilities())
   })
 
   test('Should throw if repository throws', async () => {
