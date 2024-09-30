@@ -1,4 +1,5 @@
 export * from './Controller'
 export * from './LoadDoctorController'
-export * from './CreateAvailabilityController'
+export * from './CreateAvailabilitiesController'
 export * from './LoadAvailabilitiesController'
+export * from './UpdateAvailabilitiesController'

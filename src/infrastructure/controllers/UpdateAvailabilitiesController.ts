@@ -1,17 +1,18 @@
 import { type IHTTPResponse, type Controller, type IHTTPRequest, Presenter, type IValidation } from '@/infrastructure'
-import { type ICreateAvailabilities } from '@/usecases'
+import { type IUpdateAvailabilities } from '@/usecases'
 
-export class CreateAvailabilityController implements Controller {
+export class UpdateAvailabilitiesController implements Controller {
   constructor (
     private readonly _validation: IValidation,
-    private readonly _usecase: ICreateAvailabilities
+    private readonly _usecase: IUpdateAvailabilities
   ) { }
 
-  async handle ({ body }: IHTTPRequest): Promise<IHTTPResponse> {
+  async handle ({ params, body }: IHTTPRequest): Promise<IHTTPResponse> {
     try {
-      const error = this._validation.validate(body)
+      const error = this._validation.validate({ ...params, ...body })
       if (error) return Presenter.badRequest(error)
-      const { doctorId, availabilities } = body
+      const { doctorId } = params
+      const { availabilities } = body
       await this._usecase.execute({ doctorId, availabilities })
       return Presenter.created()
     } catch (error) {

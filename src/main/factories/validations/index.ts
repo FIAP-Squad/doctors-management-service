@@ -1,3 +1,4 @@
 export * from './makeSignInValidation'
-export * from './makeCreateAvailabilityValidation'
+export * from './makeCreateAvailabilitiesValidation'
 export * from './makeLoadAvailabilitiesValidation'
+export * from './makeUpdateAvailabilitiesValidation'

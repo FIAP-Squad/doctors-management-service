@@ -11,8 +11,8 @@ export class LoadAvailabilitiesController implements Controller {
     try {
       const error = this._validation.validate(params)
       if (error) return Presenter.badRequest(error)
-      const doctors = await this._usecase.execute(params.doctor)
-      return Presenter.ok(doctors)
+      const availabilities = await this._usecase.execute(params.doctorId)
+      return Presenter.ok(availabilities)
     } catch (error) {
       return Presenter.serverError(error)
     }
