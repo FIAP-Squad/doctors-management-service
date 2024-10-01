@@ -14,6 +14,7 @@ const mockRequest = (): IHTTPRequest => ({
     },
     availability: {
       id: 1,
+      date: '2024-01-01',
       startTime: '09h00',
       endTime: '09h03'
     }

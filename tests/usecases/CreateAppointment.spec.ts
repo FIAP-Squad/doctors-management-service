@@ -2,7 +2,6 @@ import { CreateAppointment, type CreateAppointmentParams, type ICreateAppointmen
 import { type IUpdateAvailabilitiesRepository, type ICreateAppointmentRepository, type IEmitterGateway, type IDeleteAppointmentRepository } from '@/infrastructure'
 import { type UpdateAvailabilitiesParams } from '@/usecases'
 
-// Mock functions and classes
 const mockCreateParams = (): CreateAppointmentParams => ({
   doctor: {
     id: 1,
@@ -15,6 +14,7 @@ const mockCreateParams = (): CreateAppointmentParams => ({
   },
   availability: {
     id: 2,
+    date: '2024-01-01',
     startTime: '10:00',
     endTime: '10:30'
   }
@@ -143,6 +143,7 @@ describe('CreateAppointment UseCase', () => {
       message: {
         doctor: { id: 1, name: 'any_user', email: 'any@mail.com' },
         patient: { id: 1, name: 'any_user' },
+        date: '2024-01-01',
         startTime: '10:00',
         endTime: '10:30'
       }
