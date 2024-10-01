@@ -7,11 +7,6 @@ on:
     branches:
       - main
 
-env:
-  AWS_REGION: us-east-1  
-  ECR_REGISTRY: 883634453599.dkr.ecr.us-east-1.amazonaws.com
-  ECR_REPOSITORY: hospital/doctors-management-service
-
 jobs:
   build-and-push:
     if: ${{ github.event.pull_request.merged == true }}
@@ -20,29 +15,6 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
-
-      - name: 🛠️ Configure AWS credentials
-        id: credentials-setup
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: 🔑 Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: 🏗️ Build Docker Image
-        id: build-image
-        run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} .
-
-      - name: 🚀 Push Docker Image to Amazon ECR
-        run: |
-          docker tag ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: 🛠️ Set up Docker Buildx for DockerHub
         uses: docker/setup-buildx-action@v2
