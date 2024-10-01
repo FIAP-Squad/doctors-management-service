@@ -3,6 +3,10 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-14.x-brightgreen) ![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue) ![AWS Cognito](https://img.shields.io/badge/AWS%20Cognito-Enabled-yellow) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.8-orange) ![AmazonMQ](https://img.shields.io/badge/AmazonMQ-Enabled-red) ![SOLID](https://img.shields.io/badge/Architecture-SOLID-brightgreen) ![TDD](https://img.shields.io/badge/Test%20Coverage-100%25-green)
 
+## 📂 Video
+
+https://drive.google.com/drive/folders/1daCQvKn0_j0_0SmUQJJJbTaDfwHLjxIl?usp=drive_link
+
 ## 📘 Overview
 
 This project is a **scalable microservice** built with **Node.js** and **TypeScript**, utilizing **RabbitMQ** and **AmazonMQ** for messaging, and **AWS Cognito** for authentication. The system architecture follows **SOLID principles** and the project is developed using **Test-Driven Development (TDD)** to ensure high code quality and reliability.
