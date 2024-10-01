@@ -6,11 +6,12 @@ import { type UpdateAvailabilitiesParams } from '@/usecases'
 const mockCreateParams = (): CreateAppointmentParams => ({
   doctor: {
     id: 1,
-    name: 'Dr. John'
+    name: 'any_user',
+    email: 'any@mail.com'
   },
   patient: {
     id: 1,
-    name: 'John Doe'
+    name: 'any_user'
   },
   availability: {
     id: 2,
@@ -140,8 +141,8 @@ describe('CreateAppointment UseCase', () => {
     expect(publishSpy).toHaveBeenCalledWith({
       queue: 'appointment-created',
       message: {
-        doctor: { id: 1, name: 'Dr. John' },
-        patient: { id: 1, name: 'John Doe' },
+        doctor: { id: 1, name: 'any_user', email: 'any@mail.com' },
+        patient: { id: 1, name: 'any_user' },
         startTime: '10:00',
         endTime: '10:30'
       }
