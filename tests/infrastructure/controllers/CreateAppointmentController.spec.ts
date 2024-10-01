@@ -5,11 +5,12 @@ const mockRequest = (): IHTTPRequest => ({
   body: {
     doctor: {
       id: 1,
-      name: 'Gabriel'
+      name: 'any_patient',
+      email: 'any@mail.com'
     },
     patient: {
       id: 1,
-      name: 'Gabriel'
+      name: 'any_patient'
     },
     availability: {
       id: 1,

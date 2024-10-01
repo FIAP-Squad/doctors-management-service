@@ -14,6 +14,7 @@ export type CreateAppointmentParams = {
   doctor: {
     id: number
     name: string
+    email: string
   }
   availability: {
     id: number
