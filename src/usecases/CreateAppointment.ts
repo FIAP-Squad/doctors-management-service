@@ -18,6 +18,7 @@ export type CreateAppointmentParams = {
   }
   availability: {
     id: number
+    date: string
     startTime: string
     endTime: string
   }
@@ -40,7 +41,7 @@ export class CreateAppointment implements ICreateAppointment {
     const id = await this._createRepository.createAppointment({ patientId: patient.id, availabilityId: availability.id })
     await this._updateRepository.updateAvailabilities({ doctorId: doctor.id, availabilities: [{ status: 'busy', id: availability.id }] })
     try {
-      await this._emitterGateway.publish({ queue: this._queue, message: { doctor, patient, startTime: availability.startTime, endTime: availability.endTime } })
+      await this._emitterGateway.publish({ queue: this._queue, message: { doctor, patient, date: availability.date, startTime: availability.startTime, endTime: availability.endTime } })
     } catch (error) {
       await this._deleteRepository.deleteAppointment({ id })
       await this._updateRepository.updateAvailabilities({ doctorId: doctor.id, availabilities: [{ status: 'available', id: availability.id }] })
